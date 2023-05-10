@@ -9,6 +9,8 @@ import {
   updateNative,
 } from './src/utilities/helper/updateHelper';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {Provider} from 'react-redux';
+import {store} from './src/store';
 
 const Stack = createNativeStackNavigator();
 
@@ -70,19 +72,21 @@ const App = () => {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{
-            headerShown: false,
-          }}
-          initialRouteName="Login">
-          {MainStack.map(item => (
-            <Stack.Screen
-              key={item.name}
-              name={item.name}
-              component={item.component}
-            />
-          ))}
-        </Stack.Navigator>
+        <Provider store={store}>
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: false,
+            }}
+            initialRouteName="Login">
+            {MainStack.map(item => (
+              <Stack.Screen
+                key={item.name}
+                name={item.name}
+                component={item.component}
+              />
+            ))}
+          </Stack.Navigator>
+        </Provider>
       </NavigationContainer>
     </SafeAreaProvider>
   );
