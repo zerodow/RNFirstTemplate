@@ -35,7 +35,8 @@ if (Platform.OS === 'ios') {
 }
 
 const layout = {
-  size: {width, height},
+  deviceWidth: width,
+  deviceHeight: height,
   statusBarPadding,
   statusBarHeight,
   isiOS: Platform.OS === 'ios',

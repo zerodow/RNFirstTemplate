@@ -11,6 +11,7 @@ import {
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {Provider} from 'react-redux';
 import {store} from './src/store';
+import {PersistGate} from 'redux-persist/lib/integration/react';
 
 const Stack = createNativeStackNavigator();
 
@@ -73,6 +74,10 @@ const App = () => {
     <SafeAreaProvider>
       <NavigationContainer>
         <Provider store={store}>
+          {/* <PersistGate
+            loading={null}
+            // persistor={persistor}
+          > */}
           <Stack.Navigator
             screenOptions={{
               headerShown: false,
@@ -86,6 +91,7 @@ const App = () => {
               />
             ))}
           </Stack.Navigator>
+          {/* </PersistGate> */}
         </Provider>
       </NavigationContainer>
     </SafeAreaProvider>
