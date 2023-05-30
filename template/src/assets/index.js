@@ -15,6 +15,7 @@ const fonts = Platform.select({
 
 const icons = {
   icBackArrowWhite: require('./icons/icBackArrowWhite.png'),
+  wallPaper: require('./icons/wallpaper.png'),
 };
 
 export {icUsers, fonts, icons};

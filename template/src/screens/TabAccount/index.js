@@ -1,11 +1,15 @@
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
+import {useDispatch} from 'react-redux';
+import {logoutAction} from '../../store/auth';
 
 const TabAccount = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const onLogout = () => {
+    // dispatch(logoutAction());
     navigation.replace('Login');
   };
   return (

@@ -1,7 +1,7 @@
 import {View, Text} from 'react-native';
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {TabStack} from '../../router';
+import {TabStack} from '../../routes/TabStack';
 
 const Tab = createBottomTabNavigator();
 

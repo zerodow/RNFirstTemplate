@@ -1,8 +1,8 @@
 import {Dimensions, Platform, StatusBar} from 'react-native';
 // import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
+const deviceWidth = Dimensions.get('window').width;
+const deviceHeight = Dimensions.get('window').height;
 
 let statusBarPadding = 0;
 let isOldDevice = false;
@@ -11,8 +11,6 @@ let statusBarHeight = 0;
 const majorVersionOS = parseInt(Platform.Version, 10);
 
 if (Platform.OS === 'ios') {
-  console.log('ios version is:', majorVersionOS);
-
   statusBarHeight = 28;
   //   statusBarHeight = getStatusBarHeight();
 
@@ -22,8 +20,6 @@ if (Platform.OS === 'ios') {
     isOldDevice = true;
   }
 } else {
-  console.log('android version is:', majorVersionOS);
-
   statusBarHeight = StatusBar.currentHeight;
 
   if (majorVersionOS < 23) {
@@ -34,13 +30,13 @@ if (Platform.OS === 'ios') {
   }
 }
 
-const layout = {
-  deviceWidth: width,
-  deviceHeight: height,
+const isIOS = Platform.OS === 'ios';
+
+export {
+  deviceWidth,
+  deviceHeight,
   statusBarPadding,
   statusBarHeight,
-  isiOS: Platform.OS === 'ios',
+  isIOS,
   isOldDevice,
 };
-
-export {layout};
