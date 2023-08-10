@@ -24,6 +24,7 @@ LogBox.ignoreAllLogs(); //Ignore all log notifications
 LogBox.ignoreLogs([
   'Warning: ...',
   'Non-serializable values were found in the navigation state',
+  'VirtualizedLists should never be nested inside plain',
 ]);
 
 if (Text.defaultProps == null) Text.defaultProps = {};

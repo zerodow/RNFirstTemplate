@@ -8,7 +8,8 @@ import React, {
   useState,
 } from 'react';
 import {useTheme} from '@react-navigation/native';
-import {defaultColors} from '../../utilities/constants';
+import {AppColors, AppFont} from '../../utilities/constants';
+import TextView from '../TextView';
 
 const UpdateLoading = (props, _ref) => {
   useImperativeHandle(_ref, () => ({show, dismiss}));
@@ -64,8 +65,8 @@ const UpdateLoading = (props, _ref) => {
 
   return (
     <View style={styles.container}>
-      <ActivityIndicator size={'large'} color={defaultColors.white} />
-      <Text style={styles.txt}>{`Updating (${progress}/100%)`}</Text>
+      <ActivityIndicator size={'large'} color={AppColors.white} />
+      <TextView style={styles.txt}>{`Updating (${progress}/100%)`}</TextView>
     </View>
   );
 };
@@ -85,9 +86,10 @@ const makeStyles = colors => {
       alignItems: 'center',
     },
     txt: {
-      color: defaultColors.white,
-      fontSize: 20,
+      color: AppColors.white,
+      fontSize: AppFont.fontSize.s20,
       marginTop: 20,
+      fontWeight: AppFont.fontWeight.bold,
     },
   });
 };

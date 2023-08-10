@@ -11,16 +11,14 @@ const storePersistConfig = persistConfig({
     },
     {debug: false},
   ),
+  blacklist: ['AuthReducer'],
+  whitelist: ['AppReducer'],
 });
 
 const persistedReducer = persistReducer(storePersistConfig, rootReducer);
 
 const store = configureStore({
   reducer: persistedReducer,
-  middleware: getDefaultMiddleware =>
-    getDefaultMiddleware({
-      serializableCheck: false,
-    }),
 });
 
 let persistor = persistStore(store);

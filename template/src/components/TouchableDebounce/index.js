@@ -1,6 +1,6 @@
 import React, {memo, useCallback, useRef} from 'react';
 import {ActivityIndicator, TouchableOpacity} from 'react-native';
-import {defaultColors} from '../../utilities/constants';
+import {AppColors} from '../../utilities/constants';
 import {delay} from '../../utilities/helper/functional';
 
 const TouchableDebounce = (
@@ -31,7 +31,7 @@ const TouchableDebounce = (
     onPress,
     noDebounce = false,
     loading,
-    loadingColor = defaultColors.white,
+    loadingColor = AppColors.white,
     disabled,
   } = props;
   const onLocalPress = useCallback(async () => {

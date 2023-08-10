@@ -1,20 +1,22 @@
 import React from 'react';
-import {Image, View} from 'react-native';
-import {defaultColors} from '../../utilities/constants';
+import {Image} from 'react-native';
+import {AppColors} from '../../utilities/constants';
 import TouchableDebounce from '../../components/TouchableDebounce';
-import {SvgXml} from 'react-native-svg';
 
 const Icon = ({
   width = 24,
   height = 24,
-  color = defaultColors.icon, // update 'fill' field in svg file to 'currentColor' to get effect
+  color = AppColors.icon, // update 'fill' field in svg file to 'currentColor' to get effect
   style,
   source,
   size = 24,
   onPress,
   hitSlop,
   isImage = false,
+  imgStyle = {},
+  ...props
 }) => {
+  const IconView = source;
   if (!source) {
     return null;
   }
@@ -25,11 +27,13 @@ const Icon = ({
       onPress={onPress}
       style={style}>
       {isImage ? (
-        <Image source={source} style={{width, height, color}} />
+        <Image source={source} style={[{width, height}, imgStyle]} {...props} />
       ) : (
-        <View style={{width, height}}>
-          <SvgXml xml={source} width="100%" height="100%" />
-        </View>
+        <IconView
+          width={size || width}
+          height={size || height}
+          style={{color}}
+        />
       )}
     </TouchableDebounce>
   );

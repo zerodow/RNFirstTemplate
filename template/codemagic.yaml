@@ -1,0 +1,127 @@
+workflows:
+  ios-workflow-development:
+    name: iOS Workflow Development
+    # max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      groups:
+        - appstore_credentials
+      vars:
+        XCODE_WORKSPACE: "DigiPro.xcworkspace" # YOUR WORKSPACE NAME HERE
+        XCODE_SCHEME: "DigiPro" # THE NAME OF YOUR SCHEME HERE
+        CONFIGURATION_NAME: "Staging"
+      node: 14.21.3
+      xcode: 14.3
+      cocoapods: default
+    triggering:
+      events:
+        - push
+        - tag
+        - pull_request
+      branch_patterns:
+        - pattern: dev # <- put the branch that the codemagic config file is
+          include: true
+          source: true
+      cancel_previous_builds: true
+    scripts:
+      - &install_package
+        name: Install npm dependencies
+        script: yarn install
+      - &install_cocoapods
+        name: Install CocoaPods dependencies
+        script: |
+          cd ios 
+          pod repo update
+          pod install
+      # - &init_keychain
+      #   name: Set up keychain to be used for codesigning using Codemagic CLI 'keychain' command
+      #   script: keychain initialize
+      # - &setup_profile_visioning
+      #   name: Set up code signing settings on Xcode project
+      #   script: xcode-project use-profiles
+      # - name: Add signing certificate
+      #   script: |
+      #     set -e # exit on first failed command
+
+      #     echo ${CERTIFICATE_DIGI?} | base64 --decode > /tmp/certificate.p12
+      #     keychain initialize
+      #     keychain add-certificates \
+      #         --certificate /tmp/certificate.p12 \
+      #         --certificate-password ${CERTIFICATE_PASSWORD}
+          
+      # - name: Increment build number
+      #   script: agvtool new-version -all $BUILD_NUMBER
+      - name: Set up code signing settings on Xcode project
+        script: xcode-project use-profiles
+      - name: Build ipa for distribution
+        script: xcode-project build-ipa \
+                    --workspace "${XCODE_WORKSPACE?}" \
+                    --scheme "${XCODE_SCHEME?}"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+    publishing:
+      email:
+        recipients:
+          - minhducc96@gmail.com
+        notify:
+          success: true # To not receive a notification when a build succeeds
+          failure: false # To not receive a notification when a build fails
+    #   app_store_connect:
+    #     apple_id: your_apple_id@example.com  # PUT YOUR APPLE ID HERE
+    #     password: Encrypted(...) # THE ENCRYPTED APP-SPECIFIC PASSWORD GOES HERE
+
+  # ---------------- ios dev workflow --------------
+  ios-workflow-production:
+    name: iOS Workflow Production
+    # max_build_duration: 60
+    # instance_type: mac_pro
+    environment:
+      groups:
+        - appstore_credentials
+      vars:
+        XCODE_WORKSPACE: "DigiPro.xcworkspace" # YOUR WORKSPACE NAME HERE
+        XCODE_SCHEME: "DigiPro" # THE NAME OF YOUR SCHEME HERE
+        CONFIGURATION_NAME: "Release"
+      node: 14.21.3
+      xcode: 14.3
+      cocoapods: default
+    triggering:
+      events:
+        - push
+        - tag
+        - pull_request
+      branch_patterns:
+        - pattern: dev # <- put the branch that the codemagic config file is
+          include: true
+          source: true
+      cancel_previous_builds: true
+    scripts:
+      - name: Update Production ENV
+        script: |
+          cd $FCI_BUILD_DIR/jarvis
+          echo ENV:
+          cat ./.env.production
+      # - *install_package
+      # - *install_cocoapods
+      # - *init_keychain
+      # - *setup_profile_visioning
+      # - *setup_certificate
+      # - *update_version
+      # - *increment_build
+      # - *setup_code_signing
+      # - *build_ipa
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+    publishing:
+      email:
+        recipients:
+          - minhducc96@gmail.com
+        notify:
+          success: true # To not receive a notification when a build succeeds
+          failure: false # To not receive a notification when a build fails
+
+
+    # EXTRACT_CERTIFICATE_WITH_PASSWORD
+    # keychain add-certificates --certificate $FCI_BUILD_DIR/certificate.p12 --certificate-password $FCI_CERTIFICATE_PASSWORD

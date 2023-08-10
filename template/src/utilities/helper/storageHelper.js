@@ -1,14 +1,19 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {USER_DATA} from '../constants/otherConstants';
 
-const getLocalUserData = (key = USER_DATA) =>
+const STORAGE_KEY = {
+  USER_DATA: 'USER_DATA',
+  LOGIN_FIRST_TIME: 'LOGIN_FIRST_TIME',
+  REMEMBER_ME: 'REMEMBER_ME',
+  LANG: 'LANG',
+};
+
+const getLocalData = ({key}) =>
   AsyncStorage.getItem(key).then(data => JSON.parse(data));
 
-const setLocalUserData = (data, key = USER_DATA) =>
+const setLocalData = ({data, key}) =>
   AsyncStorage.setItem(key, JSON.stringify(data));
 
-const deleteUserDataFromLocal = (key = USER_DATA) =>
-  AsyncStorage.removeItem(key);
+const deleteUserDataFromLocal = key => AsyncStorage.removeItem(key);
 
 const extractUserDataFromDBResponse = (userData = {}, defaultValues) => {
   const {id, email, name, profile_image} = userData;
@@ -23,8 +28,9 @@ const extractUserDataFromDBResponse = (userData = {}, defaultValues) => {
 };
 
 export {
-  getLocalUserData,
-  setLocalUserData,
+  STORAGE_KEY,
+  getLocalData,
+  setLocalData,
   deleteUserDataFromLocal,
   extractUserDataFromDBResponse,
 };

@@ -1,6 +1,14 @@
 import axios from 'axios';
 import {AxiosConfig} from '../utilities/constants';
 import {store} from '../store';
+import {Alert} from 'react-native';
+import {t} from 'i18next';
+import apiPrefix from './apiPrefix';
+import {refLoadingCpn} from 'src/routes';
+import {showAlertCustomResponse} from 'src/utilities/helper/functional';
+import {logoutAction} from 'src/store/auth';
+import {deleteTokenFcm} from './noti';
+import {deleteTokenSchema} from './schema/otherSchema';
 
 const axiosInstance = axios.create({
   baseURL: AxiosConfig.BASE_URL,
@@ -92,65 +100,67 @@ const handlingErrors = error => {
       message: 'Request Canceled',
     });
   }
-  const _ignore = ['me/refresh-token', 'auth/login', 'user/forgot-password'];
-  if (
-    error?.response?.data?.errorCode === 401 &&
-    _ignore.findIndex(_e => _e === error?.config?.url) === -1
-  ) {
-    if (!isAlerted) {
-      isAlerted = true;
-      Alert.alert(null, error?.response?.data?.message, [
-        {
-          onPress: () => {
-            store.dispatch(LogoutRequestAction());
-            isAlerted = false;
-          },
-          text: 'Ok',
-        },
-      ]);
-    }
-    return Promise.reject(error);
-  }
-  let message;
-  let status;
-  let data;
-  try {
-    if (error.response) {
-      if (error.response.data && typeof error.response.data === 'object') {
-        status = error.response.status || error.response.data.errorCode;
-        message =
-          error.response.data.message ||
-          error.response.data.resultMsg ||
-          'Có lỗi xảy ra.';
-        data = error.response.data;
-      } else {
-        message = error.response.statusText;
-        status = error.response.status;
-      }
-    } else {
-      if (error.request) {
-        // The request was made but no response was received
-        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of http.ClientRequest in node.js
-        status = AxiosConfig.REQUEST_STATUS_CODE.UNKNOWN_ERROR;
-        message = `${error.message || 'Có lỗi xảy ra.'}`;
-        if (
-          error.code === 'ECONNABORTED' ||
-          error.message === 'Network Error'
-        ) {
-          status = AxiosConfig.REQUEST_STATUS_CODE.INTERNET_ERROR;
-          message = 'Lỗi internet, vui lòng kiểm tra kết nối';
-        }
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        status = AxiosConfig.REQUEST_STATUS_CODE.CONFIG_ERROR;
-        message = error.message;
-      }
-    }
-  } catch (e) {
-    status = AxiosConfig.REQUEST_STATUS_CODE.HANDLE_ERROR;
-    message = e.message;
-  }
-  return Promise.reject({message, data, status});
+  // const _ignore = ['me/refresh-token', 'auth/login', 'user/forgot-password'];
+  // if (
+  //   error?.response?.status === 401 &&
+  //   _ignore.findIndex(_e => _e === error?.config?.url) === -1
+  // ) {
+  //   if (!isAlerted) {
+  //     isAlerted = true;
+  //     Alert.alert(null, error?.response?.data?.message, [
+  //       {
+  //         onPress: () => {
+  //           store.dispatch(LogoutRequestAction());
+  //           isAlerted = false;
+  //         },
+  //         text: 'Ok',
+  //       },
+  //     ]);
+  //   }
+  //   return Promise.reject(error);
+  // }
+  let message = error.message;
+  let status = error.response.status;
+  let data = error.response.data;
+
+  return handleAlertError(message);
+  // try {
+
+  //   if (error.response) {
+  //     if (error.response.data && typeof error.response.data === 'object') {
+  //       status = error.response.status || error.response.data.errorCode;
+  //       message =
+  //         error.response.data.message ||
+  //         error.response.data.resultMsg ||
+  //         'Có lỗi xảy ra.';
+  //       data = error.response.data;
+  //     } else {
+  //       message = error.response.statusText;
+  //       status = error.response.status;
+  //     }
+  //   } else {
+  //     if (error.request) {
+  //       // The request was made but no response was received
+  //       // `error.request` is an instance of XMLHttpRequest in the browser and an instance of http.ClientRequest in node.js
+  //       status = AxiosConfig.REQUEST_STATUS_CODE.UNKNOWN_ERROR;
+  //       message = `${error.message || 'Có lỗi xảy ra.'}`;
+  //       if (
+  //         error.code === 'ECONNABORTED' ||
+  //         error.message === 'Network Error'
+  //       ) {
+  //         status = AxiosConfig.REQUEST_STATUS_CODE.INTERNET_ERROR;
+  //         message = 'Lỗi internet, vui lòng kiểm tra kết nối';
+  //       }
+  //     } else {
+  //       // Something happened in setting up the request that triggered an Error
+  //       status = AxiosConfig.REQUEST_STATUS_CODE.CONFIG_ERROR;
+  //       message = error.message;
+  //     }
+  //   }
+  // } catch (e) {
+  //   status = AxiosConfig.REQUEST_STATUS_CODE.HANDLE_ERROR;
+  //   message = e.message;
+  // }
 };
 
 axiosInstance.interceptors.request.use(async request => {
@@ -162,21 +172,65 @@ axiosInstance.interceptors.request.use(async request => {
   return request;
 });
 
+export const handleAlertError = error => {
+  refLoadingCpn?.dismiss();
+  return Alert.alert(t('errorTitle'), error, [
+    {
+      text: 'Ok',
+    },
+  ]);
+};
+
+const listFullResponse = [
+  apiPrefix.LOGIN,
+  apiPrefix.SEND_REGISTER_REQUEST,
+  apiPrefix.VERIFY_OTP,
+  apiPrefix.CREATE_NEW_PASS,
+  apiPrefix.ACITVE_APARTMENT,
+  apiPrefix.SEND_OTP_FORGOT_PASS,
+];
+
 axiosInstance.interceptors.response.use(
   response => {
-    console.log('response', response);
+    // console.log('response', response);
     logResponse(response);
     if (
       response.data !== null &&
       response.data !== undefined &&
       response.status.toString().startsWith('2')
     ) {
-      return response;
+      const dataResponse = response.data;
+      if (
+        listFullResponse.findIndex(ele =>
+          response?.config?.url.includes(ele),
+        ) !== -1
+      ) {
+        return dataResponse;
+      }
+      if (
+        dataResponse.meta !== null &&
+        dataResponse.meta !== null &&
+        dataResponse.meta.error_code === 200
+      ) {
+        return dataResponse.data;
+      } else {
+        return handleAlertError(dataResponse.meta?.error_message);
+      }
+    } else if (response.status == '401') {
+      showAlertCustomResponse({
+        title: t('sessionExpired'),
+        description: t('plsReLogin'),
+        onConfirm: async () => {
+          // const res = await deleteTokenFcm(deleteTokenSchema());
+          store.dispatch(logoutAction());
+        },
+      });
     } else {
-      throw new Error(response.statusText);
+      return handleAlertError(response.statusText);
     }
   },
   error => {
+    console.log('throw error here', error);
     if (error.response) {
       const apiName = error.config.url || 'UNKNOWN';
       logError(apiName, error.response);

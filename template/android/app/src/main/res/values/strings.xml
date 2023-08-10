@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">ProjectName</string>
-    <string moduleConfig="true" name="CodePushDeploymentKey">bZJXR9IS3ST0tSOSybp6JbzDWcZRcOlqT-stu</string>
+    <string name="app_name">Ibuilding Plus</string>
+       <string moduleConfig="true" name="CodePushDeploymentKey">nuiVl_2OVmTJsOxBUT4hhznEpMIW4I0SfSw3H</string>
 </resources>

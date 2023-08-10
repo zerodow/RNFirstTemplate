@@ -4,12 +4,21 @@ import {NAME_REDUCER} from '../../utilities/constants';
 const slice = createSlice({
   name: NAME_REDUCER.AUTH,
   initialState: {
+    projectId: null,
+    towerId: null,
+    phoneNumber: null,
+    userId: null,
     userInfo: null,
     accessToken: null,
   },
   reducers: {
     setUserInfo: (state, {payload: {data}}) => {
+      state.type = data.type;
       state.userInfo = data;
+      state.userId = data.userId;
+      state.projectId = data.projectId;
+      state.towerId = data.towerId;
+      state.phoneNumber = data.phone;
     },
     clearUserInfo: state => {
       state.userInfo = null;

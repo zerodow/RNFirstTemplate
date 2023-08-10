@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "154124614161",
+    "project_id": "digipro-c14c2",
+    "storage_bucket": "digipro-c14c2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:154124614161:android:a2bd97e0d4c2e35608cfb0",
+        "android_client_info": {
+          "package_name": "com.ibuilding.digipro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "154124614161-hc0j0h6pka98nk0a140pfmru95r3k0k2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNgAC5zXb4RyXE_Fo0kMWSZ25DnhGT6uo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "154124614161-hc0j0h6pka98nk0a140pfmru95r3k0k2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "154124614161-oturmhr9sbcp8s4p8a62tpq8cu6dh8mj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ibuilding.digipro"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
